@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 850" width="1200" height="850">
+  <rect width="1200" height="850" fill="#e8e6df"/>
+  <rect x="0" y="0" width="1200" height="110" fill="#0b0b0b"/>
+  <text x="40" y="70" font-family="Georgia,serif" font-size="34" font-style="italic" fill="#ffffff">Terrain</text>
+  <text x="1180" y="70" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="15" letter-spacing="4" fill="#ffffff">EDITION 12</text>
+  <rect x="40" y="150" width="520" height="380" fill="#c9c5b8"/>
+  <path d="M40 280 L220 170 L360 300 L440 240 L560 330 L560 530 L40 530 Z" fill="#d9f75f"/>
+  <path d="M220 170 L360 300 L440 240 L560 330" fill="none" stroke="#0b0b0b" stroke-width="3"/>
+  <rect x="600" y="150" width="560" height="180" fill="none" stroke="#0b0b0b" stroke-width="2"/>
+  <text x="620" y="200" font-family="Georgia,serif" font-size="60" fill="#0b0b0b">24</text>
+  <text x="620" y="230" font-family="Helvetica,Arial,sans-serif" font-size="16" letter-spacing="2" fill="#0b0b0b">VANISHING VALLEYS</text>
+  <text x="600" y="360" font-family="Helvetica,Arial,sans-serif" font-size="14" letter-spacing="1" fill="#0b0b0b" opacity="0.6">A FIELD GUIDE TO THE HIGH HIMALAYA</text>
+  <rect x="40" y="570" width="300" height="240" fill="#0b0b0b"/>
+  <rect x="370" y="570" width="790" height="240" fill="none" stroke="#0b0b0b" stroke-width="2"/>
+  <text x="400" y="630" font-family="Georgia,serif" font-size="26" font-style="italic" fill="#0b0b0b">On silence and</text>
+  <text x="400" y="665" font-family="Georgia,serif" font-size="26" font-style="italic" fill="#0b0b0b">altitude — p.34</text>
+  <text x="940" y="770" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="13" letter-spacing="3" fill="#0b0b0b" opacity="0.6">EDITORIAL DESIGN · TEAM OF 3</text>
+  <rect x="640" y="646" width="498" height="120" fill="#d9f75f"/>
+</svg>

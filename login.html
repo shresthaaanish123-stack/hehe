@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Login — Anish Shrestha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #111111; color: #ffffff; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+    background-image: radial-gradient(circle at 50% 30%, rgba(214, 247, 114, 0.08), transparent 70%);
+  }
+
+  .login-card {
+    background: #181818; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px;
+    width: 100%; max-width: 400px; padding: 36px 32px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+  }
+
+  .brand { display: inline-block; font-family: 'Georgia', serif; font-style: italic; font-size: 24px; margin-bottom: 24px; color: #ffffff; text-decoration: none; }
+  .brand em { color: #d6f772; font-style: normal; margin-left: 2px; }
+
+  h1 { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.02em; }
+  .sub { color: #888888; font-size: 13px; margin-bottom: 28px; line-height: 1.5; }
+
+  .error-box {
+    background: rgba(255, 68, 68, 0.12); border: 1px solid rgba(255, 68, 68, 0.3); color: #ff6666;
+    padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; display: none;
+  }
+
+  .form-group { margin-bottom: 20px; }
+  label { display: block; font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: #aaaaaa; margin-bottom: 8px; }
+  
+  .input-wrap { position: relative; }
+  input[type="text"], input[type="password"] {
+    width: 100%; padding: 12px 14px; background: #222222; border: 1px solid #333333; border-radius: 8px;
+    color: #ffffff; font-size: 14px; font-family: inherit; transition: border-color 0.2s, background 0.2s;
+  }
+  input:focus { outline: none; border-color: #d6f772; background: #282828; }
+  
+  .toggle-pwd {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: #888888; cursor: pointer; font-size: 12px; font-family: 'DM Mono', monospace;
+  }
+  .toggle-pwd:hover { color: #ffffff; }
+
+  .btn-submit {
+    width: 100%; background: #d6f772; color: #111111; border: none; padding: 14px; border-radius: 8px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: background 0.2s, transform 0.1s; margin-top: 8px;
+  }
+  .btn-submit:hover { background: #e2fb8d; }
+  .btn-submit:active { transform: scale(0.98); }
+
+  .footer-text { margin-top: 24px; text-align: center; font-size: 12px; color: #666666; }
+  .footer-text a { color: #aaaaaa; text-decoration: underline; text-underline-offset: 3px; }
+  .footer-text a:hover { color: #ffffff; }
+</style>
+</head>
+<body>
+
+  <div class="login-card">
+    <a href="/" class="brand">Anish<em>✳</em></a>
+    <h1>Admin Portal</h1>
+    <div class="sub">Sign in with your admin credentials to access the portfolio control center.</div>
+
+    <div class="error-box" id="errorBox">Invalid username or password. Please try again.</div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" autocomplete="username" required placeholder="admin" autofocus />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrap">
+          <input type="password" id="password" autocomplete="current-password" required placeholder="••••••••" />
+          <button type="button" class="toggle-pwd" onclick="togglePasswordVisibility()">SHOW</button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">Sign In &rarr;</button>
+    </form>
+
+    <div class="footer-text">
+      <a href="/">&larr; Back to website</a>
+    </div>
+  </div>
+
+<script>
+  function togglePasswordVisibility() {
+    const pwdInput = document.getElementById('password');
+    const toggleBtn = document.querySelector('.toggle-pwd');
+    if (pwdInput.type === 'password') {
+      pwdInput.type = 'text';
+      toggleBtn.textContent = 'HIDE';
+    } else {
+      pwdInput.type = 'password';
+      toggleBtn.textContent = 'SHOW';
+    }
+  }
+
+  async function handleLogin(e) {
+    e.preventDefault();
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const errorBox = document.getElementById('errorBox');
+    const submitBtn = document.getElementById('submitBtn');
+
+    errorBox.style.display = 'none';
+    submitBtn.textContent = 'Authenticating...';
+    submitBtn.disabled = true;
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: usernameInput.value.trim(),
+          password: passwordInput.value
+        })
+      });
+      const data = await res.json();
+
+      if (res.ok && data.ok) {
+        if (data.token) {
+          try { localStorage.setItem('admin_token', data.token); } catch (_) {}
+        }
+        window.location.href = '/admin';
+      } else {
+        errorBox.textContent = data.error || 'Invalid username or password.';
+        errorBox.style.display = 'block';
+        submitBtn.textContent = 'Sign In →';
+        submitBtn.disabled = false;
+      }
+    } catch (err) {
+      errorBox.textContent = 'Connection error. Please try again.';
+      errorBox.style.display = 'block';
+      submitBtn.textContent = 'Sign In →';
+      submitBtn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

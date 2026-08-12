@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1100" width="900" height="1100">
+  <rect width="900" height="1100" fill="#0b0b0b"/>
+  <g transform="translate(450,470)">
+    <circle r="300" fill="none" stroke="#eaeaea" stroke-opacity="0.12" stroke-width="1"/>
+    <circle r="250" fill="none" stroke="#eaeaea" stroke-opacity="0.18" stroke-width="1"/>
+    <circle r="200" fill="none" stroke="#eaeaea" stroke-opacity="0.25" stroke-width="1"/>
+    <circle r="150" fill="none" stroke="#eaeaea" stroke-opacity="0.4" stroke-width="1"/>
+    <circle r="100" fill="#d9f75f"/>
+    <circle r="30" fill="#0b0b0b"/>
+  </g>
+  <g stroke="#eaeaea" stroke-opacity="0.18" stroke-width="1">
+    <line x1="0" y1="470" x2="900" y2="470"/>
+    <line x1="450" y1="170" x2="450" y2="770"/>
+  </g>
+  <text x="40" y="80" font-family="Helvetica,Arial,sans-serif" font-size="15" letter-spacing="6" fill="#d9f75f">NO. 04</text>
+  <text x="40" y="1050" text-anchor="start" font-family="Helvetica,Arial,sans-serif" font-size="90" font-weight="700" letter-spacing="-3" fill="#ffffff">SONIC</text>
+  <text x="40" y="1052" font-family="Helvetica,Arial,sans-serif" font-size="90" font-weight="700" letter-spacing="-3" fill="#ffffff">FIELDS</text>
+  <text x="40" y="975" font-family="Helvetica,Arial,sans-serif" font-size="17" letter-spacing="5" fill="#8a8a8a">CONCERT SERIES · 22—24 NOV</text>
+</svg>

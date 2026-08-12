@@ -1,0 +1,49 @@
+{
+  "adminUser": "anish",
+  "adminPass": "anish@123",
+  "heroAvail": "Available for projects",
+  "firstName": "Anish",
+  "lastName": "Shrestha",
+  "heroRolePrefix": "Graphic",
+  "heroRoleSuffix": "Designer",
+  "instagramUrl": "https://www.instagram.com/aanii_ish",
+  "behanceUrl": "https://www.behance.net/aanishshrestha",
+  "linkedinUrl": "https://www.linkedin.com/in/aanish-shrestha-a093911b9",
+  "whatsappUrl": "https://wa.me/9779861367944?text=Hello%20Anish%2C%20I%20saw%20your%20website%20and%20would%20like%20to%20discuss%20a%20project.",
+  "aboutTitle": "A Designer, Not a Decorator",
+  "aboutP1": "I'm a Kathmandu-based graphic designer with a passion for building brands that connect, communicate, and convert. From crafting bold brand identities to designing intuitive digital experiences, I bring a thoughtful, detail-driven approach to every project.",
+  "aboutP2": "Over 6 years I've worked with startups, agencies, and global brands — turning vague concepts into polished visual systems. I believe great design is part art, part strategy, and 100% intentional.",
+  "stat1Num": "40+",
+  "stat1Label": "Projects",
+  "stat2Num": "12",
+  "stat2Label": "Happy Clients",
+  "stat3Num": "06",
+  "stat3Label": "Years Designing",
+  "skills": [
+    {
+      "name": "Adobe Photoshop",
+      "percent": "95"
+    },
+    {
+      "name": "Adobe Illustrator",
+      "percent": "92"
+    },
+    {
+      "name": "Adobe InDesign",
+      "percent": "85"
+    },
+    {
+      "name": "Adobe After Effects",
+      "percent": "10"
+    },
+    {
+      "name": "Adobe Premiere Pro",
+      "percent": "82"
+    }
+  ],
+  "contactLabel": "Have an idea? Let's talk.",
+  "contactHeadlineHtml": "Let's make<br /><span class=\"outline\">something</span> honest",
+  "location": "Kathmandu, Nepal",
+  "timezone": "GMT +5:45",
+  "footerCopy": "© 2026 Anish Shrestha"
+}

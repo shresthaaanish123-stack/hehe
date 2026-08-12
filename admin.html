@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Portfolio Control Center</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f4f1ea; color: #111; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 32px; max-width: 1000px; margin: 0 auto; }
+  
+  header { margin-bottom: 24px; }
+  h1 { font-size: 24px; margin-bottom: 6px; }
+  .sub { color: #666; font-size: 14px; }
+  .back { display: inline-block; margin-bottom: 16px; color: #111; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* Navigation Tabs */
+  .tabs { display: flex; gap: 10px; margin-bottom: 24px; border-bottom: 2px solid #ddd; padding-bottom: 2px; }
+  .tab-btn { background: none; border: none; font-size: 15px; font-weight: 600; color: #666; padding: 10px 16px; cursor: pointer; border-radius: 6px 6px 0 0; transition: color .2s, background .2s; }
+  .tab-btn.active { color: #111; background: #fff; border-bottom: 2px solid #111; margin-bottom: -2px; }
+
+  .tab-content { display: none; background: #fff; padding: 24px; border-radius: 10px; border: 1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0,0,0,.04); }
+  .tab-content.active { display: block; }
+
+  /* Media Manager Styles */
+  .drop {
+    border: 2px dashed #aaa; border-radius: 10px; padding: 26px; text-align: center;
+    color: #666; cursor: pointer; transition: border-color .2s, background .2s; margin-bottom: 28px; font-size: 14px;
+  }
+  .drop.over { border-color: #7fba41; background: #f0f6e3; }
+  .drop input { display: none; }
+
+  #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+  .tile { background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #ddd; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+  .tile img, .tile video { width: 100%; height: 150px; object-fit: cover; display: block; }
+  .tile .name { font-size: 11px; padding: 8px 9px 4px; color: #444; word-break: break-all; }
+  .tile .row { display: flex; gap: 6px; padding: 0 8px 8px; }
+  .tile button { flex: 1; border: 1px solid #ccc; background: #fff; border-radius: 6px; padding: 5px 0; font-size: 12px; cursor: pointer; }
+  .tile button:hover { border-color: #111; }
+  .tile button.del { color: #c00; }
+  .tile button.del:hover { background: #fdecec; border-color: #c00; }
+
+  /* Content Editor Form Styles */
+  .section-title { font-size: 16px; font-weight: 700; margin: 24px 0 14px; padding-bottom: 6px; border-bottom: 1px solid #eee; color: #222; }
+  .section-title:first-of-type { margin-top: 0; }
+  
+  .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 12px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.04em; }
+  input[type="text"], input[type="url"], textarea, select {
+    width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit;
+    background: #fafafa; transition: border-color .2s, background .2s;
+  }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: #111; background: #fff; }
+  textarea { min-height: 80px; resize: vertical; }
+
+  .skills-row { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+  .skills-row input[type="text"] { flex: 2; }
+  .skills-row input[type="number"] { width: 90px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
+  .btn-remove { background: #fee; color: #c00; border: 1px solid #fcc; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+
+  .btn-save {
+    background: #111; color: #fff; border: none; padding: 14px 28px; border-radius: 8px; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: background .2s, transform .1s; margin-top: 24px;
+  }
+  .btn-save:hover { background: #333; }
+  .btn-save:active { transform: scale(.98); }
+
+  #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: #111; color: #fff;
+    padding: 12px 24px; border-radius: 20px; font-size: 14px; font-weight: 500; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; z-index: 1000; box-shadow: 0 6px 20px rgba(0,0,0,.2); }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <a class="back" href="/" style="margin-bottom: 0;">&larr; Back to website</a>
+    <button onclick="handleLogout()" style="background: #fee; border: 1px solid #fcc; color: #c00; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 6px; cursor: pointer;">🔒 Sign Out</button>
+  </div>
+  <header>
+    <h1>Portfolio Control Center — Admin</h1>
+    <div class="sub">Manage images, videos, and edit website text content live in real-time.</div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('mediaTab', this)">📁 Media Gallery Manager</button>
+    <button class="tab-btn" onclick="switchTab('contentTab', this)">✍️ Website Content Editor</button>
+  </div>
+
+  <!-- TAB 1: MEDIA MANAGER -->
+  <div id="mediaTab" class="tab-content active">
+    <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+      <label for="folderSelect" style="font-size: 13px; font-weight: 700; color: #333;">SELECT PROJECT FOLDER:</label>
+      <select id="folderSelect" style="padding: 8px 14px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; background: #fff; cursor: pointer; width: auto;">
+        <option value="social-media">Social Media</option>
+        <option value="Midnight EP">Midnight EP</option>
+        <option value="Logos">Logos</option>
+        <option value="Terrain 12">Terrain 12</option>
+        <option value="Wild Botanics">Wild Botanics</option>
+      </select>
+    </div>
+
+    <div class="drop" id="drop">Drop media files here (Photos / Videos), or click to choose</div>
+    <input type="file" id="file" multiple accept="image/*,video/*">
+
+    <div id="grid"></div>
+  </div>
+
+  <!-- TAB 2: CONTENT EDITOR -->
+  <div id="contentTab" class="tab-content">
+    <form id="contentForm" onsubmit="saveContent(event)">
+      
+      <!-- Admin Security Credentials -->
+      <div class="section-title">🔑 Change Username & Password</div>
+      <div style="background: #fafafa; border: 1px solid #e5e5e5; padding: 18px; border-radius: 8px; margin-bottom: 24px;">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Current Password</label>
+            <input type="password" id="credCurrentPass" placeholder="Enter current password">
+          </div>
+          <div class="form-group">
+            <label>New Username</label>
+            <input type="text" id="credNewUser" placeholder="New username">
+          </div>
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" id="credNewPass" placeholder="New password (min 4 chars)">
+          </div>
+        </div>
+        <button type="button" onclick="updateCredentials()" style="background: #111; color: #fff; border: none; padding: 10px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px;">🔑 Update Username & Password</button>
+      </div>
+
+      <!-- Hero Section -->
+      <div class="section-title">Hero Section</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Availability Badge</label>
+          <input type="text" id="heroAvail">
+        </div>
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" id="firstName">
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" id="lastName">
+        </div>
+        <div class="form-group">
+          <label>Role Prefix (Bold)</label>
+          <input type="text" id="heroRolePrefix">
+        </div>
+        <div class="form-group">
+          <label>Role Suffix</label>
+          <input type="text" id="heroRoleSuffix">
+        </div>
+      </div>
+
+      <!-- Social & Contact Links -->
+      <div class="section-title">Social Links & Contact Handles</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Instagram URL</label>
+          <input type="url" id="instagramUrl">
+        </div>
+        <div class="form-group">
+          <label>Behance URL</label>
+          <input type="url" id="behanceUrl">
+        </div>
+        <div class="form-group">
+          <label>LinkedIn URL</label>
+          <input type="url" id="linkedinUrl">
+        </div>
+        <div class="form-group">
+          <label>WhatsApp Link</label>
+          <input type="text" id="whatsappUrl">
+        </div>
+      </div>
+
+      <!-- About Section -->
+      <div class="section-title">About Section</div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>About Headline / Subtitle</label>
+          <input type="text" id="aboutTitle">
+        </div>
+        <div class="form-group full">
+          <label>About Paragraph 1</label>
+          <textarea id="aboutP1"></textarea>
+        </div>
+        <div class="form-group full">
+          <label>About Paragraph 2</label>
+          <textarea id="aboutP2"></textarea>
+        </div>
+      </div>
+
+      <!-- Statistics -->
+      <div class="section-title">Statistics Counter</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Stat 1 Number</label>
+          <input type="text" id="stat1Num">
+        </div>
+        <div class="form-group">
+          <label>Stat 1 Label</label>
+          <input type="text" id="stat1Label">
+        </div>
+        <div class="form-group">
+          <label>Stat 2 Number</label>
+          <input type="text" id="stat2Num">
+        </div>
+        <div class="form-group">
+          <label>Stat 2 Label</label>
+          <input type="text" id="stat2Label">
+        </div>
+        <div class="form-group">
+          <label>Stat 3 Number</label>
+          <input type="text" id="stat3Num">
+        </div>
+        <div class="form-group">
+          <label>Stat 3 Label</label>
+          <input type="text" id="stat3Label">
+        </div>
+      </div>
+
+      <!-- Skills Progress Bars -->
+      <div class="section-title">Skills & Software (%)</div>
+      <div id="skillsContainer"></div>
+      <button type="button" onclick="addSkillRow()" style="background:#eee;border:1px solid #ccc;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;margin-top:6px;">+ Add New Skill</button>
+
+      <!-- Contact & Footer Section -->
+      <div class="section-title">Contact & Footer Details</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Contact Section Label</label>
+          <input type="text" id="contactLabel">
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="location">
+        </div>
+        <div class="form-group">
+          <label>Timezone</label>
+          <input type="text" id="timezone">
+        </div>
+        <div class="form-group full">
+          <label>Footer Copyright</label>
+          <input type="text" id="footerCopy">
+        </div>
+      </div>
+
+      <button type="submit" class="btn-save">💾 Save Website Text Changes</button>
+    </form>
+  </div>
+
+  <div id="toast"></div>
+
+<script>
+  const channel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('portfolio_gallery') : null;
+
+  const showToast = msg => {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toast.classList.remove('show'), 2400);
+  };
+
+  const switchTab = (tabId, btn) => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+  };
+
+  /* --- MEDIA MANAGER LOGIC --- */
+  const grid = document.getElementById('grid');
+  const drop = document.getElementById('drop');
+  const file = document.getElementById('file');
+  const folderSelect = document.getElementById('folderSelect');
+  let currentFolder = folderSelect.value;
+  let images = [];
+
+  const notifyMediaUpdate = () => {
+    if (channel) channel.postMessage({ type: 'IMAGES_UPDATED', folder: currentFolder });
+    try { localStorage.setItem('portfolio_gallery_updated', Date.now().toString()); } catch (_) {}
+  };
+
+  folderSelect.addEventListener('change', () => {
+    currentFolder = folderSelect.value;
+    loadMedia();
+  });
+
+  const loadMedia = async () => {
+    const r = await fetch('/api/images?folder=' + encodeURIComponent(currentFolder));
+    const d = await r.json();
+    images = d.images || [];
+    renderMedia();
+  };
+
+  const renderMedia = () => {
+    grid.innerHTML = '';
+    images.forEach((name, i) => {
+      const tile = document.createElement('div');
+      tile.className = 'tile';
+      const isVid = /\.(mp4|webm|mov)$/i.test(name);
+      const mediaHtml = isVid
+        ? '<video src="' + encodeURIComponent(currentFolder) + '/' + encodeURIComponent(name) + '" autoplay loop muted playsinline></video>'
+        : '<img src="' + encodeURIComponent(currentFolder) + '/' + encodeURIComponent(name) + '" alt="">';
+
+      tile.innerHTML =
+        mediaHtml +
+        '<div class="name">' + name + '</div>' +
+        '<div class="row">' +
+          '<button data-act="up" ' + (i === 0 ? 'disabled' : '') + '>↑</button>' +
+          '<button data-act="down" ' + (i === images.length - 1 ? 'disabled' : '') + '>↓</button>' +
+          '<button data-act="del" class="del">✕</button>' +
+        '</div>';
+      const v = tile.querySelector('video');
+      if (v) {
+        tile.addEventListener('mouseenter', () => { v.muted = false; v.volume = 1.0; v.play().catch(() => {}); });
+        tile.addEventListener('mouseleave', () => { v.muted = true; });
+      }
+
+      tile.querySelector('[data-act="up"]').addEventListener('click', () => moveMedia(i, -1));
+      tile.querySelector('[data-act="down"]').addEventListener('click', () => moveMedia(i, 1));
+      tile.querySelector('[data-act="del"]').addEventListener('click', () => delMedia(name));
+      grid.appendChild(tile);
+    });
+  };
+
+  const saveOrder = async () => {
+    await fetch('/api/reorder?folder=' + encodeURIComponent(currentFolder), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order: images })
+    });
+  };
+
+  const moveMedia = (i, dir) => {
+    const j = i + dir;
+    if (j < 0 || j >= images.length) return;
+    const tmp = images[i];
+    images[i] = images[j];
+    images[j] = tmp;
+    renderMedia();
+    saveOrder().then(notifyMediaUpdate);
+  };
+
+  const delMedia = async name => {
+    if (!confirm('Delete ' + name + '?')) return;
+    const r = await fetch('/api/images/' + encodeURIComponent(name) + '?folder=' + encodeURIComponent(currentFolder), { method: 'DELETE' });
+    const d = await r.json();
+    if (d.ok) { images = d.images; renderMedia(); showToast('Deleted ' + name); notifyMediaUpdate(); }
+    else showToast(d.error || 'Delete failed');
+  };
+
+  const uploadMedia = async files => {
+    const fd = new FormData();
+    for (const f of files) fd.append('files', f);
+    const r = await fetch('/api/upload?folder=' + encodeURIComponent(currentFolder), { method: 'POST', body: fd });
+    const d = await r.json();
+    if (d.ok) { images = d.images; renderMedia(); showToast('Uploaded ' + d.saved + ' file(s)'); notifyMediaUpdate(); }
+    else showToast(d.error || 'Upload failed');
+  };
+
+  drop.addEventListener('click', () => file.click());
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+  drop.addEventListener('drop', e => {
+    e.preventDefault();
+    drop.classList.remove('over');
+    uploadMedia(e.dataTransfer.files);
+  });
+  file.addEventListener('change', () => { uploadMedia(file.files); file.value = ''; });
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/logout', { method: 'POST' });
+      try { localStorage.removeItem('admin_token'); } catch (_) {}
+    } catch (_) {}
+    window.location.href = '/login';
+  };
+
+  const updateCredentials = async () => {
+    const currentPassword = document.getElementById('credCurrentPass').value;
+    const newUsername = document.getElementById('credNewUser').value;
+    const newPassword = document.getElementById('credNewPass').value;
+
+    if (!currentPassword) return showToast('Please enter your current password.');
+    if (!newUsername) return showToast('Please enter a new username.');
+    if (!newPassword || newPassword.length < 4) return showToast('New password must be at least 4 characters.');
+
+    const res = await fetch('/api/change-credentials', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword, newUsername, newPassword })
+    });
+    const d = await res.json();
+    if (res.ok && d.ok) {
+      showToast('Username & Password updated successfully!');
+      document.getElementById('credCurrentPass').value = '';
+      document.getElementById('credNewPass').value = '';
+      loadContent();
+    } else {
+      showToast(d.error || 'Failed to update credentials');
+    }
+  };
+
+  /* --- CONTENT EDITOR LOGIC --- */
+  const fields = [
+    'heroAvail', 'firstName', 'lastName', 'heroRolePrefix', 'heroRoleSuffix',
+    'instagramUrl', 'behanceUrl', 'linkedinUrl', 'whatsappUrl',
+    'aboutTitle', 'aboutP1', 'aboutP2',
+    'stat1Num', 'stat1Label', 'stat2Num', 'stat2Label', 'stat3Num', 'stat3Label',
+    'contactLabel', 'location', 'timezone', 'footerCopy'
+  ];
+
+  const loadContent = async () => {
+    const r = await fetch('/api/content');
+    const d = await r.json();
+    if (d && d.content) {
+      fields.forEach(f => {
+        const el = document.getElementById(f);
+        if (el) el.value = d.content[f] || '';
+      });
+      const userEl = document.getElementById('credNewUser');
+      if (userEl) userEl.value = d.content.adminUser || 'admin';
+      renderSkills(d.content.skills || []);
+    }
+  };
+
+  const renderSkills = skills => {
+    const container = document.getElementById('skillsContainer');
+    container.innerHTML = '';
+    skills.forEach(s => addSkillRow(s.name, s.percent));
+  };
+
+  const addSkillRow = (name = '', percent = '80') => {
+    const container = document.getElementById('skillsContainer');
+    const div = document.createElement('div');
+    div.className = 'skills-row';
+    div.innerHTML = `
+      <input type="text" placeholder="Skill Name (e.g. Adobe Photoshop)" value="${name}" class="skill-name">
+      <input type="number" placeholder="%" min="0" max="100" value="${percent}" class="skill-pct"> %
+      <button type="button" class="btn-remove" onclick="this.parentNode.remove()">✕</button>
+    `;
+    container.appendChild(div);
+  };
+
+  const saveContent = async e => {
+    e.preventDefault();
+    const payload = {};
+    fields.forEach(f => {
+      const el = document.getElementById(f);
+      if (el) payload[f] = el.value;
+    });
+
+    const skills = [];
+    document.querySelectorAll('.skills-row').forEach(row => {
+      const name = row.querySelector('.skill-name').value;
+      const percent = row.querySelector('.skill-pct').value;
+      if (name) skills.push({ name, percent });
+    });
+    payload.skills = skills;
+
+    const r = await fetch('/api/content', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: payload })
+    });
+    const d = await r.json();
+    if (d.ok) {
+      showToast('Website text saved & updated live!');
+      if (channel) channel.postMessage({ type: 'CONTENT_UPDATED' });
+      try { localStorage.setItem('portfolio_content_updated', Date.now().toString()); } catch (_) {}
+    } else {
+      showToast('Save failed');
+    }
+  };
+
+  loadMedia();
+  loadContent();
+</script>
+</body>
+</html>

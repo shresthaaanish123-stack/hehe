@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" width="900" height="900">
+  <defs>
+    <radialGradient id="moon" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#eaeaea"/>
+      <stop offset="100%" stop-color="#c9c5b8"/>
+    </radialGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b0b0f"/>
+      <stop offset="100%" stop-color="#1a1a24"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="900" fill="url(#sky)"/>
+  <g stroke="#eaeaea" stroke-opacity="0.12" stroke-width="1">
+    <circle cx="450" cy="440" r="200" fill="none"/>
+    <circle cx="450" cy="440" r="280" fill="none"/>
+    <circle cx="450" cy="440" r="360" fill="none"/>
+  </g>
+  <circle cx="450" cy="440" r="150" fill="url(#moon)"/>
+  <circle cx="420" cy="410" r="20" fill="#0b0b0f" opacity="0.25"/>
+  <circle cx="490" cy="480" r="34" fill="#0b0b0f" opacity="0.2"/>
+  <circle cx="460" cy="470" r="12" fill="#0b0b0f" opacity="0.3"/>
+  <circle cx="120" cy="180" r="2" fill="#ffffff" opacity="0.7"/>
+  <circle cx="780" cy="150" r="2" fill="#ffffff" opacity="0.5"/>
+  <circle cx="700" cy="700" r="1.5" fill="#ffffff" opacity="0.6"/>
+  <circle cx="200" cy="620" r="1.5" fill="#ffffff" opacity="0.5"/>
+  <circle cx="600" cy="120" r="1" fill="#ffffff" opacity="0.8"/>
+  <text x="60" y="840" font-family="Helvetica,Arial,sans-serif" font-size="72" font-weight="300" letter-spacing="2" fill="#ffffff">MIDNIGHT</text>
+  <text x="64" y="852" font-family="Helvetica,Arial,sans-serif" font-size="15" letter-spacing="8" fill="#d9f75f">UNTITLED — SIDE A</text>
+  <text x="60" y="100" font-family="Helvetica,Arial,sans-serif" font-size="14" letter-spacing="4" fill="#8a8a8a">ALBUM ARTWORK · 12" VINYL</text>
+</svg>
